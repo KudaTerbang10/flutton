@@ -9,18 +9,21 @@ String mongoDbModelToJson(productModel data) => json.encode(data.toJson());
 
 class productModel {
   productModel({
+    required this.id,
     required this.namaProduk,
     required this.harga,
     required this.kategori,
     required this.imgPath,
   });
 
+  ObjectId id;
   String namaProduk;
   String harga;
   String kategori;
   String imgPath;
 
   factory productModel.fromJson(Map<String, dynamic> json) => productModel(
+        id: json["_id"],
         namaProduk: json["namaProduk"],
         harga: json["harga"],
         kategori: json["kategori"],
@@ -28,6 +31,7 @@ class productModel {
       );
 
   Map<String, dynamic> toJson() => {
+        "_id": id,
         "namaProduk": namaProduk,
         "harga": harga,
         "kategori": kategori,

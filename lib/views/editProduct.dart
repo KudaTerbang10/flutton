@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:textfield/models/productModel.dart';
 import 'package:textfield/dbHelper/mongodb.dart';
-import 'package:mongo_dart/mongo_dart.dart' as M;
 
-class addProduct extends StatefulWidget {
-  const addProduct({Key? key}) : super(key: key);
+class editProduct extends StatefulWidget {
+  const editProduct({Key? key}) : super(key: key);
 
   @override
-  State<addProduct> createState() => _addProductState();
+  State<editProduct> createState() => _editProductState();
 }
 
-class _addProductState extends State<addProduct> {
+class _editProductState extends State<editProduct> {
   var productNameController = new TextEditingController();
   var productPriceController = new TextEditingController();
   var productCategoryController = new TextEditingController();
@@ -18,21 +17,20 @@ class _addProductState extends State<addProduct> {
 
   @override
   Widget build(BuildContext context) {
-    // productModel data =
-    //     ModalRoute.of(context)?.settings.arguments as productModel;
+    productModel data =
+        ModalRoute.of(context)!.settings.arguments as productModel;
 
     // if (data != null) {
-    //   // productNameController.text = data.namaProduk;
-    //   // productPriceController.text = data.harga;
-    //   // productCategoryController.text = data.kategori;
-    //   productImgPathController.text = data.imgPath;
-    //   _checkInsertUpdate = "Update";
+    //   productNameController.text = data.namaProduk;
+    //   productPriceController.text = data.harga;
+    //   productCategoryController.text = data.kategori;
+    productImgPathController.text = data.imgPath;
     // }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 247, 175, 157),
         leading: Icon(Icons.add),
-        title: Text('Insert'),
+        title: Text('Update Data'),
         centerTitle: true,
       ),
       body: Stack(
@@ -52,26 +50,26 @@ class _addProductState extends State<addProduct> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     newField('Nama Produk', productNameController, false,
-                        Icons.dinner_dining),
-                    newField(
-                        'Harga', productPriceController, false, Icons.discount),
+                        Icons.dinner_dining, data.namaProduk),
+                    newField('Harga', productPriceController, false,
+                        Icons.discount, data.harga),
                     newField('Kategori', productCategoryController, false,
-                        Icons.category),
-                    newField(
-                        'Image', productImgPathController, false, Icons.image),
+                        Icons.category, data.kategori),
+                    newField('Image', productImgPathController, false,
+                        Icons.image, data.imgPath),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
                             onPressed: () {
-                              _insertData(
-                                productNameController.text,
-                                productPriceController.text,
-                                productCategoryController.text,
-                                productImgPathController.text,
-                              );
+                              _updateData(
+                                  data.id,
+                                  productNameController.text,
+                                  productPriceController.text,
+                                  productCategoryController.text,
+                                  productImgPathController.text);
                             },
-                            child: Text('Add'))
+                            child: Text('Update'))
                       ],
                     )
                   ],
@@ -85,12 +83,13 @@ class _addProductState extends State<addProduct> {
   }
 
   Container newField(String label, TextEditingController controller,
-      bool obscure, IconData iconData) {
+      bool obscure, IconData iconData, String hint) {
     return Container(
       margin: EdgeInsets.all(10),
       child: TextField(
         decoration: InputDecoration(
           labelText: label,
+          hintText: hint,
           prefix: Container(
             margin: EdgeInsets.fromLTRB(5, 0, 10, 0),
             child: Icon(
@@ -111,30 +110,16 @@ class _addProductState extends State<addProduct> {
     );
   }
 
-  Future<void> _insertData(
-      String namaProduk, String harga, String kategori, String imgPath) async {
-    var _id = M.ObjectId();
-    final data = productModel(
-        id: _id,
+  Future<void> _updateData(var id, String namaProduk, String harga,
+      String kategori, String imgPath) async {
+    final updateData = productModel(
+        id: id,
         namaProduk: namaProduk,
         harga: harga,
         kategori: kategori,
         imgPath: imgPath);
-    var result = await MongoDatabase.insert(data)
-        .whenComplete(() => Navigator.pop(context))
-        .then((value) {
-      setState(() {});
-    });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Data produk ${namaProduk} ditambahkan")));
-    _clearAll();
-  }
-
-  void _clearAll() {
-    productNameController.text = "";
-    productPriceController.text = "";
-    productCategoryController.text = "";
-    productImgPathController.text = "";
+    await MongoDatabase.update(updateData)
+        .whenComplete(() => Navigator.pop(context));
   }
 }

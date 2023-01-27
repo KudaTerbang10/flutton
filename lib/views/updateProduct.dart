@@ -2,24 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:textfield/dbHelper/mongodb.dart';
 import 'package:textfield/models/productModel.dart';
 import 'package:textfield/views/addProduct.dart';
-import 'package:textfield/views/editProduct.dart';
 
-class productView extends StatefulWidget {
-  const productView({Key? key}) : super(key: key);
-
+class productUpdate extends StatefulWidget {
   @override
-  State<productView> createState() => _productViewState();
+  State<productUpdate> createState() => _productUpdateState();
 }
 
-class _productViewState extends State<productView> {
+class _productUpdateState extends State<productUpdate> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.cake),
-        title: Text('Kak Babayan Shop'),
+        leading: Icon(Icons.edit_note),
+        title: Text("Update Product"),
         centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 247, 175, 157),
         actions: [
           IconButton(
               onPressed: () {
@@ -32,38 +28,34 @@ class _productViewState extends State<productView> {
               icon: Icon(Icons.add_circle))
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: FutureBuilder(
-          future: MongoDatabase.getData(),
-          builder: (context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
+      body: FutureBuilder(
+        future: MongoDatabase.getData(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  return displayCard(
+                      productModel.fromJson(snapshot.data[index]));
+                },
               );
             } else {
-              if (snapshot.hasData) {
-                var totalData = snapshot.data.length;
-                print("Total Data ${totalData.toString()}");
-                return ListView.builder(
-                  itemCount: totalData,
-                  itemBuilder: (context, index) {
-                    return newCard(productModel.fromJson(snapshot.data[index]));
-                  },
-                );
-              } else {
-                return Center(
-                  child: Text("No Data Available"),
-                );
-              }
+              return Center(
+                child: Text('No Data Found'),
+              );
             }
-          },
-        ),
+          }
+        },
       ),
     );
   }
 
-  Container newCard(productModel data) {
+  Container displayCard(productModel data) {
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Card(
@@ -116,6 +108,10 @@ class _productViewState extends State<productView> {
                             style: TextStyle(
                               color: Color.fromARGB(255, 247, 175, 157),
                             )),
+                        Text(' - ${data.id.$oid}',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 247, 175, 157),
+                            )),
                       ],
                     ),
                   ),
@@ -145,16 +141,12 @@ class _productViewState extends State<productView> {
                       IconButton(
                           onPressed: () {
                             Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) {
-                                          return editProduct();
-                                        },
-                                        settings:
-                                            RouteSettings(arguments: data)))
-                                .then((value) {
-                              setState(() {});
-                            });
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) {
+                                      return addProduct();
+                                    },
+                                    settings: RouteSettings(arguments: data)));
                           },
                           icon: Icon(
                             Icons.edit,
