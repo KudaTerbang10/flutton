@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:textfield/models/productModel.dart';
 import 'package:textfield/dbHelper/mongodb.dart';
 import 'package:mongo_dart/mongo_dart.dart' as M;
 
-class Texter extends StatefulWidget {
-  const Texter({Key? key}) : super(key: key);
+class addProduct extends StatefulWidget {
+  const addProduct({Key? key}) : super(key: key);
 
   @override
-  State<Texter> createState() => _TexterState();
+  State<addProduct> createState() => _addProductState();
 }
 
-class _TexterState extends State<Texter> {
+class _addProductState extends State<addProduct> {
   var productNameController = new TextEditingController();
   var productPriceController = new TextEditingController();
   var productCategoryController = new TextEditingController();
+  var productImgPathController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,21 +43,35 @@ class _TexterState extends State<Texter> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    newField('Nama Produk', 'Tambahkan nama produk',
-                        productNameController, false, Icons.dinner_dining),
+                    newField(
+                        'Nama Produk',
+                        'Tambahkan nama produk',
+                        productNameController,
+                        false,
+                        Icons.dinner_dining,
+                        TextInputType.text),
                     newField('Harga', '1500', productPriceController, false,
-                        Icons.discount),
-                    newField('Kategori', 'makanan | minuman',
-                        productCategoryController, false, Icons.category),
+                        Icons.discount, TextInputType.number),
+                    newField(
+                        'Kategori',
+                        'makanan | minuman',
+                        productCategoryController,
+                        false,
+                        Icons.category,
+                        TextInputType.text),
+                    newField('Image', 'URL', productImgPathController, false,
+                        Icons.image, TextInputType.text),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         ElevatedButton(
                             onPressed: () {
                               _insertData(
-                                  productNameController.text,
-                                  productPriceController.text,
-                                  productCategoryController.text);
+                                productNameController.text,
+                                productPriceController.text,
+                                productCategoryController.text,
+                                productImgPathController.text,
+                              );
                             },
                             child: Text('Insert Data'))
                       ],
@@ -70,11 +86,17 @@ class _TexterState extends State<Texter> {
     );
   }
 
-  Container newField(String label, String hint,
-      TextEditingController controller, bool obscure, IconData iconData) {
+  Container newField(
+      String label,
+      String hint,
+      TextEditingController controller,
+      bool obscure,
+      IconData iconData,
+      TextInputType inputType) {
     return Container(
       margin: EdgeInsets.all(10),
       child: TextField(
+        keyboardType: inputType,
         decoration: InputDecoration(
           hintText: hint,
           labelText: label,
@@ -99,10 +121,13 @@ class _TexterState extends State<Texter> {
   }
 
   Future<void> _insertData(
-      String namaProduk, String harga, String kategori) async {
+      String namaProduk, String harga, String kategori, String imgPath) async {
     // var _id = M.ObjectId();
-    final data =
-        productModel(namaProduk: namaProduk, harga: harga, kategori: kategori);
+    final data = productModel(
+        namaProduk: namaProduk,
+        harga: harga,
+        kategori: kategori,
+        imgPath: imgPath);
     var result = await MongoDatabase.insert(data);
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -114,5 +139,6 @@ class _TexterState extends State<Texter> {
     productNameController.text = "";
     productPriceController.text = "";
     productCategoryController.text = "";
+    productImgPathController.text = "";
   }
 }

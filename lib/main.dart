@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:textfield/views/textField.dart';
+import 'package:textfield/views/productView.dart';
+import 'package:textfield/views/addProduct.dart';
 
 import 'dbHelper/mongodb.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Texter(),
+      home: productView(),
     );
   }
 }
