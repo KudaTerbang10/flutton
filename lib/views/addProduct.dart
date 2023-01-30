@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:textfield/models/productModel.dart';
 import 'package:textfield/dbHelper/mongodb.dart';
 import 'package:mongo_dart/mongo_dart.dart' as M;
+import 'package:textfield/views/productView.dart';
 
 class addProduct extends StatefulWidget {
   const addProduct({Key? key}) : super(key: key);
@@ -32,7 +33,7 @@ class _addProductState extends State<addProduct> {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 247, 175, 157),
         leading: Icon(Icons.add),
-        title: Text('Insert'),
+        title: Text('Add Product'),
         centerTitle: true,
       ),
       body: Stack(
@@ -66,7 +67,7 @@ class _addProductState extends State<addProduct> {
                             onPressed: () {
                               _insertData(
                                 productNameController.text,
-                                productPriceController.text,
+                                int.parse(productPriceController.text),
                                 productCategoryController.text,
                                 productImgPathController.text,
                               );
@@ -112,7 +113,7 @@ class _addProductState extends State<addProduct> {
   }
 
   Future<void> _insertData(
-      String namaProduk, String harga, String kategori, String imgPath) async {
+      String namaProduk, int harga, String kategori, String imgPath) async {
     var _id = M.ObjectId();
     final data = productModel(
         id: _id,
@@ -121,14 +122,17 @@ class _addProductState extends State<addProduct> {
         kategori: kategori,
         imgPath: imgPath);
     var result = await MongoDatabase.insert(data)
-        .whenComplete(() => Navigator.pop(context))
+        .whenComplete(() => Navigator.push(context, MaterialPageRoute(
+              builder: (context) {
+                return productView();
+              },
+            )))
         .then((value) {
       setState(() {});
     });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Data produk ${namaProduk} ditambahkan")));
-    _clearAll();
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text("Data produk ${namaProduk} ditambahkan")));
+    // _clearAll();
   }
 
   void _clearAll() {

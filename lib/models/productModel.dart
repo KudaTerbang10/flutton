@@ -18,7 +18,7 @@ class productModel {
 
   ObjectId id;
   String namaProduk;
-  String harga;
+  int harga;
   String kategori;
   String imgPath;
 

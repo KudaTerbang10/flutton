@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:textfield/views/productView.dart';
 import 'package:textfield/views/addProduct.dart';
-import 'package:textfield/views/updateProduct.dart';
 
 import 'dbHelper/mongodb.dart';
 
@@ -20,7 +19,6 @@ class MyApp extends StatelessWidget {
       title: 'Flutton',
       debugShowCheckedModeBanner: false,
       home: productView(),
-      // home: productUpdate(),
     );
   }
 }

@@ -52,7 +52,7 @@ class _editProductState extends State<editProduct> {
                     newField('Nama Produk', productNameController, false,
                         Icons.dinner_dining, data.namaProduk),
                     newField('Harga', productPriceController, false,
-                        Icons.discount, data.harga),
+                        Icons.discount, data.harga.toString()),
                     newField('Kategori', productCategoryController, false,
                         Icons.category, data.kategori),
                     newField('Image', productImgPathController, false,
@@ -65,7 +65,7 @@ class _editProductState extends State<editProduct> {
                               _updateData(
                                   data.id,
                                   productNameController.text,
-                                  productPriceController.text,
+                                  int.parse(productPriceController.text),
                                   productCategoryController.text,
                                   productImgPathController.text);
                             },
@@ -110,7 +110,7 @@ class _editProductState extends State<editProduct> {
     );
   }
 
-  Future<void> _updateData(var id, String namaProduk, String harga,
+  Future<void> _updateData(var id, String namaProduk, int harga,
       String kategori, String imgPath) async {
     final updateData = productModel(
         id: id,

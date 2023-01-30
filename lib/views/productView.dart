@@ -125,23 +125,23 @@ class _productViewState extends State<productView> {
                       Spacer(
                         flex: 10,
                       ),
-                      IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.thumb_up,
-                            color: Colors.grey,
-                          )),
-                      Text('20'),
-                      Spacer(
-                        flex: 5,
-                      ),
-                      IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.comment, color: Colors.grey)),
-                      Text('23'),
-                      Spacer(
-                        flex: 5,
-                      ),
+                      // IconButton(
+                      //     onPressed: () {},
+                      //     icon: Icon(
+                      //       Icons.thumb_up,
+                      //       color: Colors.grey,
+                      //     )),
+                      // Text('20'),
+                      // Spacer(
+                      //   flex: 5,
+                      // ),
+                      // IconButton(
+                      //     onPressed: () {},
+                      //     icon: Icon(Icons.comment, color: Colors.grey)),
+                      // Text('23'),
+                      // Spacer(
+                      //   flex: 5,
+                      // ),
                       IconButton(
                           onPressed: () {
                             Navigator.push(
@@ -162,6 +162,20 @@ class _productViewState extends State<productView> {
                           )),
                       Text('Edit'),
                       Spacer(
+                        flex: 5,
+                      ),
+                      IconButton(
+                          onPressed: () async {
+                            // await MongoDatabase.delete(data);
+                            // setState(() {});
+                            showAlertDialog(context, data);
+                          },
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.grey,
+                          )),
+                      Text('Delete'),
+                      Spacer(
                         flex: 10,
                       ),
                     ],
@@ -172,6 +186,42 @@ class _productViewState extends State<productView> {
           ],
         ),
       ),
+    );
+  }
+
+  void showAlertDialog(BuildContext context, productModel data) {
+    // set up the buttons
+    Widget cancelButton = OutlinedButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    Widget deleteButton = ElevatedButton(
+      style: ElevatedButton.styleFrom(primary: Colors.red),
+      child: Text("Delete"),
+      onPressed: () async {
+        await MongoDatabase.delete(data);
+        setState(() {});
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Data produk ${data.namaProduk} dihapus")));
+      },
+    ); // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Konfirmasi Delete"),
+      content: Text(
+          "Apakah anda yakin ingin menghapus ${data.namaProduk} dari daftar produk?"),
+      actions: [
+        cancelButton,
+        deleteButton,
+      ],
+    ); // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }
