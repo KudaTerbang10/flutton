@@ -14,8 +14,15 @@ class MongoDatabase {
     productCollection = db.collection(USER_COLLECTION);
   }
 
-  static Future<List<Map<String, dynamic>>> getData() async {
-    final arrData = await productCollection.find().toList();
+  static Future<List<Map<String, dynamic>>> getDataMakanan() async {
+    final arrData =
+        await productCollection.find(where.eq('kategori', 'makanan')).toList();
+    return arrData;
+  }
+
+  static Future<List<Map<String, dynamic>>> getDataMinuman() async {
+    final arrData =
+        await productCollection.find(where.eq('kategori', 'minuman')).toList();
     return arrData;
   }
 

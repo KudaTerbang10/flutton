@@ -14,52 +14,94 @@ class productView extends StatefulWidget {
 class _productViewState extends State<productView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: Icon(Icons.cake),
-        title: Text('Kak Babayan Shop'),
-        centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 247, 175, 157),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return addProduct();
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+          appBar: AppBar(
+            leading: Icon(Icons.cake),
+            title: Text('Kak Babayan Shop'),
+            centerTitle: true,
+            backgroundColor: Color.fromARGB(255, 247, 175, 157),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return addProduct();
+                      },
+                    ));
                   },
-                ));
-              },
-              icon: Icon(Icons.add_circle))
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: FutureBuilder(
-          future: MongoDatabase.getData(),
-          builder: (context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              if (snapshot.hasData) {
-                var totalData = snapshot.data.length;
-                print("Total Data ${totalData.toString()}");
-                return ListView.builder(
-                  itemCount: totalData,
-                  itemBuilder: (context, index) {
-                    return newCard(productModel.fromJson(snapshot.data[index]));
-                  },
-                );
-              } else {
-                return Center(
-                  child: Text("No Data Available"),
-                );
-              }
-            }
-          },
-        ),
-      ),
+                  icon: Icon(Icons.add_circle))
+            ],
+            bottom: TabBar(tabs: <Widget>[
+              Tab(
+                icon: Icon(Icons.dinner_dining),
+              ),
+              Tab(
+                icon: Icon(Icons.coffee),
+              )
+            ]),
+          ),
+          body: TabBarView(children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: FutureBuilder(
+                future: MongoDatabase.getDataMakanan(),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    if (snapshot.hasData) {
+                      var totalData = snapshot.data.length;
+                      print("Total Data ${totalData.toString()}");
+                      return ListView.builder(
+                        itemCount: totalData,
+                        itemBuilder: (context, index) {
+                          return newCard(
+                              productModel.fromJson(snapshot.data[index]));
+                        },
+                      );
+                    } else {
+                      return Center(
+                        child: Text("No Data Available"),
+                      );
+                    }
+                  }
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: FutureBuilder(
+                future: MongoDatabase.getDataMinuman(),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    if (snapshot.hasData) {
+                      var totalData = snapshot.data.length;
+                      print("Total Data ${totalData.toString()}");
+                      return ListView.builder(
+                        itemCount: totalData,
+                        itemBuilder: (context, index) {
+                          return newCard(
+                              productModel.fromJson(snapshot.data[index]));
+                        },
+                      );
+                    } else {
+                      return Center(
+                        child: Text("No Data Available"),
+                      );
+                    }
+                  }
+                },
+              ),
+            ),
+          ])),
     );
   }
 
